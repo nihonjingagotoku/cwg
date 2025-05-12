@@ -96,8 +96,9 @@ class RetrieveSheet(Resource):
     def get(self):
         temp_path = request.args.get('id');
         pdf = send_file(os.path.join(temp_path, SHEET_FILE), \
-                        mimetype='application/pdf', \
-                        cache_timeout=-1);
+                        mimetype='application/pdf')
+                        # , \
+                        # cache_timeout=-1);
         return pdf;
 
 class RetrieveCount(Resource):
@@ -247,6 +248,6 @@ def main(argv):
     api.add_resource(GenerateSheet, '/generate_sheet');
     api.add_resource(RetrieveSheet, '/retrieve_sheet');
     api.add_resource(RetrieveCount, '/retrieve_count');
-    app.run(host='0.0.0.0', port='5002', threaded=True);
+    app.run(port='5002', threaded=True, debug=True);
 if __name__ == '__main__':
     main(sys.argv[1:]);

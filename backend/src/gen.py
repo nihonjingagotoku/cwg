@@ -47,6 +47,7 @@ CHARACTER_ROW_HEIGHT = SQUARE_SIZE*2+RADICAL_HEIGHT+RADICAL_PINYIN_HEIGHT;
 SQUARE_PADDING = SQUARE_SIZE/15;
 RADICAL_PADDING = RADICAL_HEIGHT/10;
 FONT_NAME = 'SourceHanSansTC-Normal'
+TURKISH_FONT_NAME="SourceSans3-Regular"
 FONT_SIZE = 13;
 HEADER_FONT_SIZE = 20;
 FOOTER_FONT_SIZE = 10;
@@ -224,7 +225,8 @@ def shorten_stroke_order(stroke_order, max_strokes):
     return new_stroke_order;
 
 def draw_header(canvas, title, font_size, y):
-    canvas.setFont(FONT_NAME, font_size);
+    # canvas.setFont(FONT_NAME, font_size);
+    canvas.setFont(TURKISH_FONT_NAME, font_size);
     canvas.drawString(GRID_OFFSET, y, title);
     canvas.drawString(NAME_OFFSET, y, 'Name:');
     canvas.drawString(NAME_OFFSET + SCORE_OFFSET, y, 'Score:');
@@ -326,15 +328,22 @@ def draw_character_row(working_dir, canvas, character_info, y, guide): #TODO: re
     canvas.drawString(pinyin_x, pinyin_y, pinyin);
 
     # draw definition
+    #Set temporary
+    canvas.setFont(TURKISH_FONT_NAME, FONT_SIZE);
     definition_x = pinyin_x + pinyin_w + DEFINITION_PADDING;
     definition_y = pinyin_y;
     max_w = CHARACTER_ROW_WIDTH - SQUARE_SIZE - TEXT_PADDING \
             - pinyin_w - DEFINITION_PADDING - TEXT_PADDING;
     definition = character_info.definition.replace(';',',').split(',');
+    #definition = combine_and_shorten_definition(definition, \
+    #                DEFINITION_SEPARATOR, \
+    #                max_w, FONT_NAME, FONT_SIZE).text;
     definition = combine_and_shorten_definition(definition, \
                     DEFINITION_SEPARATOR, \
-                    max_w, FONT_NAME, FONT_SIZE).text;
+                    max_w, TURKISH_FONT_NAME, FONT_SIZE).text;
     canvas.drawString(definition_x, definition_y, definition);
+    # revert 
+    canvas.setFont(FONT_NAME, FONT_SIZE);
 
     # draw stroke order
     character = character_info.character;
@@ -548,6 +557,8 @@ def generate_sheet(makemeahanzi_path, working_dir, title, guide, stroke_order_co
 
     c = canvas.Canvas(os.path.join(working_dir, SHEET_FILE), PAGE_SIZE);
     pdfmetrics.registerFont(TTFont(FONT_NAME, FONT_NAME + '.ttf'));
+    # Register font that supports Turkish
+    pdfmetrics.registerFont(TTFont(TURKISH_FONT_NAME, TURKISH_FONT_NAME + '.ttf'));
 
     words_with_spanning_translation = get_spanning_translations( \
                                         character_infos, words);
